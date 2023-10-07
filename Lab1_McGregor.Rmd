@@ -1,0 +1,209 @@
+---
+title: "Lab 1 McGregor"
+author: "Jen McGregor"
+date: "9/23/2021"
+output:
+  html_document:
+    theme: yeti
+  toc: TRUE
+---
+
+## Task 1
+
+Below is a plot of a visualization in Gapminder (the default/starting one actually). Look it over and take note of the variables being visualized.
+
+![Plot 1](DataScreenshot.png)
+
+
+**1. Identify, and list here, what aesthetics are being used and which variables are being mapped to each aesthetic.**
+
+1. Income is being mapped to the x variable
+  + Income is also being grouped in levels (1-4) in ascending order of value
+2. Life Expectancy is being mapped to the y variable
+3. World Regions are being mapped to color
+4. Population is being mapped to size
+
+
+**2. Import the q1data.csv dataset.**
+```{r,results='hide'}
+myData <- read.csv("q1data.csv")
+myData
+```
+
+**3. Recreate the plot as best you can using ggplot.**
+```{r,message='hide'}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+myData%>%
+  ggplot(aes(x=income,y=life_exp,color=four_regions,size=population))+
+  geom_point()+
+  scale_x_continuous(name="Income",breaks=c(500,1000,2000,4000,8000,16000,32000,64000),trans = 'log2')+
+  scale_y_continuous(name="Life Expectancy",breaks=c(20,30,40,50,60,70,80,90),limits=c(0,90))+
+  scale_color_discrete("World Region")+
+  scale_size_continuous("Population")
+```
+
+**4. What other geometries could you use here besides geom_point? Provide an actual plot of another geometry being used here and why it’s good or bad for visualizing these data.**
+
+You could use a line plot geometry instead of geom_point to display the data. However, this geometry is not good for visualizing this data because the population variable is not accounted for as a means for explaining why certain regions have higher incomes and life expectancies.
+```{r}
+options(scipen=999)
+myData%>%
+  ggplot(aes(x=income,y=life_exp,color=four_regions,size=population))+
+  geom_smooth(method=lm,se=FALSE)+
+  scale_x_continuous(name="Income",breaks=c(500,1000,2000,4000,8000,16000,32000,64000),trans = 'log2')+
+  scale_y_continuous(name="Life Expectancy",breaks=c(20,30,40,50,60,70,80,90),limits=c(0,90))+
+  scale_color_discrete("World Region")+
+  scale_size_continuous("Population")
+```
+
+## Task 2
+
+**Below is another plot of a visualization in Gapminder. Look it over and take note of the variables being visualized.**
+
+![Plot #2](GapMinderScreenshot2.png)
+
+**1. Identify, and list here, what aesthetics are being used and which variables are being mapped to each aesthetic.**
+
+1. Exports % of GDP is being mapped to the x variable
+2. Imports % of GDP is being mapped to the y variable
+3. World Regions are being mapped to color
+4. Energy use is being mapped to size
+
+**2. Import the q2data.csv dataset.**
+
+```{r,results='hide'}
+myData2 <- read.csv("q2data.csv")
+myData2
+```
+
+**3. Recreate the plot as best you can using ggplot.**
+```{r}
+myData2%>%
+  ggplot(aes(x=exports,y=imports,color=four_regions,size=energy))+
+  guides(size=FALSE)+
+  geom_point()+
+  scale_x_continuous(name="Exports(/% of GDP)",breaks=c(20,40,60,80,100,120,140,160,180,200,220),limits=c(0,220))+
+  scale_y_continuous(name="Imports(/% of GDP)",breaks=c(500,100,150,200,250,300,350,400),limits=c(0,400))+
+  scale_color_discrete("World Region")+
+  scale_size_discrete("Energy")
+```
+
+**4. What other geometries could you use here besides geom_point? Provide an actual plot of another geometry being used here and why it’s good or bad for visualizing these data.**
+
+You could use a area plot geometry instead of geom_point to display the data. However, this geometry is not good for visualizing this data because the energy variable is not accounted for as a means for explaining why certain regions have higher exports and imports.
+```{r}
+myData2%>%
+  ggplot(aes(x=exports,y=imports,fill=four_regions,size=energy))+
+  geom_area(position="dodge",alpha=0.5)+
+  guides(size=FALSE)+
+  scale_x_continuous(name="Exports(/% of GDP)",breaks=c(20,40,60,80,100,120,140,160,180,200,220),limits=c(0,220))+
+  scale_y_continuous(name="Imports(/% of GDP)",breaks=c(500,100,150,200,250,300,350,400),limits=c(0,400))+
+  scale_size_discrete("Energy")+
+  scale_color_discrete("World Region")
+```
+
+## Task 3
+
+Below is a final plot of a visualization in Gapminder. Look it over and take note of the variables being visualized.
+![Plot #3](Screenshot3.png)
+
+**1. Identify, and list here, what aesthetics are being used and which variables are being mapped to each aesthetic.**
+
+1. Individuals using the internet is being mapped to the x variable
+2. GDP per capita is being mapped to the y variable
+3. World Regions are being mapped to color
+4. Income is being mapped to size
+
+
+**2. Import the q3data.csv dataset.**
+
+```{r,results='hide'}
+myData3 <- read.csv("q3data.csv")
+myData3
+````
+
+**3. Recreate the plot as best you can using ggplot.**
+
+```{r}
+myData3%>%
+  ggplot(aes(x=internet_users,y=gdp,color=four_regions,size=income))+
+  guides(size=FALSE)+
+  geom_point()+
+  scale_x_continuous(name="Individuals using the internet",breaks=c(10,20,30,40,50,60,70,80,90),limits=c(0,90))+
+  scale_y_continuous(name="Imports(/% of GDP)",breaks=c(200,500,1000,2000,5000,10000,20000,50000,100000),trans='log2')+
+  scale_color_discrete("World Region")+
+  scale_size_continuous("Income")
+```
+
+**4. What other geometries could you use here besides geom_point? Provide an actual plot of another geometry being used here and why it’s good or bad for visualizing these data.**
+
+You could use a boxplot geometry instead of geom_point to display the data. However, this geometry is not good for visualizing this data because the income variable is not accounted for as a means for explaining why certain regions have higher amounts of internet users and GDP.
+```{r}
+myData3%>%
+  ggplot(aes(x=internet_users,y=gdp,fill=four_regions,size=income))+
+  guides(size=FALSE)+
+  geom_boxplot()+
+  scale_x_continuous(name="Individuals using the internet",breaks=c(10,20,30,40,50,60,70,80,90),limits=c(0,90))+
+  scale_y_continuous(name="Imports(/% of GDP)",breaks=c(200,500,1000,2000,5000,10000,20000,50000,100000),trans='log2')+
+  scale_fill_discrete("World Region")+
+  scale_size_continuous("Income")
+```
+
+## Challenge Points
+
+**For one of the Tasks above, create a visualization using the same variables but map them to different aesthetics than you used above (originally). Then answer the following questions:**
+
+Before:
+
+1. Income is being mapped to the x variable
+    + Income is also being grouped in levels (1-4) in ascending order of value
+
+2. Life Expectancy is being mapped to the y variable
+
+3. World Regions are being mapped to color
+
+4. Population is being mapped to size
+
+Now:
+
+1. Population is being mapped to the x variable
+
+2. Income is being mapped to the y variable
+
+3. World Regions are being mapped to color
+
+4. Life Expectancy is being mapped to size
+```{r,results='hide'}
+myData <- read.csv("q1data.csv")
+myData
+```
+
+```{r}
+myData%>%
+  ggplot(aes(x=population,y=income,color=four_regions,size=life_exp))+
+  geom_point()+
+  scale_x_continuous(name="Population")+
+  scale_y_continuous(name="Income")+
+  scale_color_discrete("World Region")+
+  scale_size_continuous("Life Expectancy")
+```
+
+**1. Is this new graph better or worse than the original? Why?**
+
+This graph is worse than the original because having life expectancy mapped to the size aesthetic does not provide enough differentiation between the plot points. The graph also does not have a lot of horizontal spread. 
+
+**2. For each aesthetic used, write down your best, general advice on what kinds of variables or data would be best displayed using that aesthetic. Try to be as thoughtful and rich as possible. For example, color may seem like it is well suited for a categorical variable, but color gradients can be used well for continuous variables. If it helps, try to think not only of the computing aspects but the business/communication/marketing aspects as well.**
+
+
+1. x variable: Variables should have a wide range of values in the data set as opposed to a dichotomous categorical variable to avoid data groupings on one side of the graph. Categorical (non-dichotomous) or numeric variables work well.
+
+2. y variable: Variables should have a wide range of values in the data set as opposed to a dichotomous categorical variable to avoid data groupings on one side of the graph. Categorical (non-dichotomous) or numeric variables work well.
+
+3. color: For this activity, color was primarily used as a means to group different world regions. However, numeric variables can also be used as color gradients. For this example, different income levels would make for an interesting color grouping/gradient. 
+
+4. size: Size variables should have a wide enough range so each of the points are not the exact same size, as seen in the last plot. Numeric variables work best with the size aesthetic.  
+
