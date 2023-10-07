@@ -1,0 +1,119 @@
+---
+title: "Week5HW2"
+author: "Jen McGregor"
+date: "2/2/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+View(mpg)
+```
+
+# HW 6
+
+This homework is from ggplot2: Elegant Graphics for Data Analysis. The quiz will ask you to upload some visualizations.
+
+# A. 2.2.1: 2, 4 (for the second part consider the function gsub)
+
+### 2.2.1: 2 How can you find out what other datasets are included with ggplot2?
+
+You can find a list of all data set included in ggplot2 at <http://docs.ggplot2.org/current/index.html>.
+
+### 2.2.1: 4 Which manufacturer has the most models in this dataset? Which model has the most variations? Does your answer change if you remove the redundant specification of drive train (e.g. “pathfinder 4wd”, “a4 quattro”) from the model name?
+
+```{r}
+library(help="ggplot2")
+#manufacturer: Dodge
+#variation: Camry
+#answer change: Yes. There were two models that appeared to have the most variation, but after removing drive train, the Camry had the most variation.
+table(mpg$manufacturer)
+q4_1_2 <- mpg %>% 
+  count(manufacturer, sort = TRUE)
+q4_1_2
+q4_2 <- mpg %>% 
+  group_by(manufacturer) %>% 
+  transmute("n" = length(unique(model))) %>% 
+  unique() %>%
+  ungroup() %>% 
+  arrange(desc(n))
+q4_2
+
+unique(mpg$model)
+
+str_trim(str_replace_all(unique(mpg$model), c("quattro" = "", "4wd" = "", 
+                                     "2wd" = "", "awd" = "")))
+
+```
+
+# B. 2.3.1: 3; Describe the data, aesthetic mappings and layers used for each of the following plots. You’ll need to guess a little because you haven’t seen all the datasets and functions yet, but use your common sense! See if you can predict what the plot will look like before running the code.
+
+#### 1. ggplot(mpg, aes(cty, hwy)) + geom_point()
+```{r}
+ggplot(mpg, aes(cty, hwy)) + geom_point()
+# data: 
+```
+
+#### 2. ggplot(diamonds, aes(carat, price)) + geom_point()
+  
+#### 3.  ggplot(economics, aes(date, unemploy)) + geom_line()
+
+#### 4.  ggplot(mpg, aes(cty)) + geom_histogram()
+
+
+# C. 2.4.1: 2 What happens if you map a continuous variable to shape? Why? What happens if you map trans to shape? Why?
+
+Since shape does not have a continuous scale, we get an error. When a discrete variable has more than 6 different values its hard to discriminate hence we get a warning.
+
+# D. 2.5.1: 1, 2 (use cty for fuel economy and a linear model smoother, use your last name as the title), 3 (go through all arguments of the function)
+
+#### 1. What happens if you try to facet by a continuous variable like hwy? What about cyl? What’s the key difference?
+
+Facetting by a continuous variable can but it is hard to interpret and read, especially when the variable has a lot of levels.
+
+#### 2. Use faceting to explore the 3-way relationship between fuel economy, engine size, and number of cylinders. How does faceting by number of cylinders change your assessement of the relationship between engine size and fuel economy?
+
+```{r}
+ggplot(mpg, aes(displ, cty)) + 
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ cyl)
+
+#8 & 6 cyl cars have (overall pattern), worse fuel economy than the 4 & 5 cyl cars, but there are exceptions. 8 cyl vehicles have largest engine size, then decreasing in numerical order of cylinders, as an overall patter, again with exceptions.
+```
+
+
+#### 3. 
+
+# E. 2.6.6
+
+#### 2a. One challenge with ggplot(mpg, aes(class, hwy)) + geom_boxplot() is that the ordering of class is alphabetical, which is not terribly useful. How could you change the factor levels to be more informative?
+#### 2b. Rather than reordering the factor by hand, you can do it automatically based on the data: ggplot(mpg, aes(reorder(class, hwy), hwy)) + geom_boxplot(). What does reorder() do? Read the documentation.
+
+you could use reorder, which takes a variable and orders its level based on the values of the second variable. If the second variable is numeric
+`reorder` by default orders by mean, this can be changed to e.g. the median.
+
+#### 3. Explore the distribution of the carat variable in the diamonds dataset. What binwidth reveals the most interesting patterns?
+
+```{r}
+bins = 200
+ggplot(diamonds, aes(x = carat)) +
+  geom_histogram(bins = bins) +
+  scale_x_continuous(limits = c(0, 2), expand = c(0,0), breaks = seq(0,2,0.1))
+```
+
+#### 4 (make density estimates) Explore the distribution of the price variable in the diamonds data. How does the distribution vary by cut?
+
+````{r}
+bins = 200
+ggplot(diamonds, aes(x = price)) +
+  geom_histogram(bins = bins) +
+  facet_wrap(~cut, scales = "free")
+
+# interpret: Fair quality  diamonds are more expensive then others. Possible reason: they are bigger
+```
+
+

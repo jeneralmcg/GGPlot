@@ -1,0 +1,63 @@
+---
+title: "Week5HW1"
+author: "Jen McGregor"
+date: "2/2/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+View(concert)
+```
+
+# HW 5
+
+For all of these problems, do not alter the original data frame or create new ones. Use the plotting functionality to set the aesthetics and annotations.
+
+# 1 Make the below visualization.
+
+```{r}
+ggplot(concert)+
+  geom_bar(aes(DOW,y=(..count..)/sum(..count..)))+
+  labs(x="",y="",title="Concert day of week")
+```
+
+# 2. Make the below visualization.
+
+```{r}
+ggplot(concert)+
+  geom_bar(aes(Month,fill=WE,y=..count../tapply(..count.., ..x.. ,sum)[..x..]),position="dodge") +
+  scale_fill_manual(name="",labels = c("Weekday", "Weekend"), values=c("blue", "orange")) +
+  labs(x="",y="",title="Proportion of weekday and weekend concerts each month")+
+  theme(legend.position="top", legend.justification="left", legend.key.size = unit(0.5, "cm"))
+```
+
+# 3. Make the below visualization.
+
+```{r}
+ggplot(concert) + 
+  geom_density(aes(Att, color=WE)) + 
+  scale_color_manual(name = "", labels = c("Weekday", "Weekend"), values=c("blue", "orange")) +
+  theme(legend.position="top", legend.justification="left", legend.key.size = unit(0.5, "cm")) + 
+  labs(x="", y="", title="Attendance distribution");
+```
+
+# 4. Make the below visualization.
+
+```{r}
+ggplot(concert)+
+  geom_boxplot(aes(Prof,WE))+
+  scale_x_continuous(breaks=c(0,2500,5000,7500,10000))+
+  labs(x="Profit",y="Weekend")
+```
+
+# 5. Make the below visualization.
+
+```{r}
+ggplot(concert)+
+  geom_point(aes(Att,Prof),color="blue")+
+  geom_smooth(aes(Att,Prof),method="lm",se=FALSE,color="orange")+
+  labs(x="Attendance",y="Profit")
+```
+
